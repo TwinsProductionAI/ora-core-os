@@ -44,10 +44,11 @@ This repo is for people who want a clear source of truth for:
 
 1. [Quickstart](docs/QUICKSTART.md)
 2. [Master White Paper](docs/ORA_CORE_OS_Master_WhitePaper.md)
-3. [Public Spec](docs/ORA_CORE_OS_PUBLIC_SPEC.md)
-4. [Manual Install](docs/INSTALL_MANUAL_GPV2.md)
-5. [Custom GPT Install](docs/INSTALL_CUSTOM_GPT.md)
-6. [GPV2 Index](docs/GPV2/README.md)
+3. [Modular Architecture and ORA RAG White Paper](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture)
+4. [Public Spec](docs/ORA_CORE_OS_PUBLIC_SPEC.md)
+5. [Manual Install](docs/INSTALL_MANUAL_GPV2.md)
+6. [Custom GPT Install](docs/INSTALL_CUSTOM_GPT.md)
+7. [GPV2 Index](docs/GPV2/README.md)
 
 ## Choose Your Path
 
@@ -55,6 +56,7 @@ This repo is for people who want a clear source of truth for:
 | --- | --- | --- |
 | Quick evaluation | You want to understand the repo in a few minutes | [docs/QUICKSTART.md](docs/QUICKSTART.md) |
 | Strategic/technical overview | You want the full public architecture narrative | [docs/ORA_CORE_OS_Master_WhitePaper.md](docs/ORA_CORE_OS_Master_WhitePaper.md) |
+| Modular architecture and RAG overview | You want the cross-layer architecture of ORA Core OS and ORA RAG | [ora-core-specs/specs/modular-architecture](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture) |
 | Manual GPV2 install | You want full control over files and wiring | [docs/INSTALL_MANUAL_GPV2.md](docs/INSTALL_MANUAL_GPV2.md) |
 | Custom GPT install | You want to port the architecture into ChatGPT | [docs/INSTALL_CUSTOM_GPT.md](docs/INSTALL_CUSTOM_GPT.md) |
 | Modular inspection | You want to inspect each core module separately | [docs/GPV2/modules/README.md](docs/GPV2/modules/README.md) |
@@ -98,6 +100,9 @@ Core rules:
 
 - [docs/ORA_CORE_OS_Master_WhitePaper.md](docs/ORA_CORE_OS_Master_WhitePaper.md)  
   Master white paper for the public ORA Core OS architecture.
+
+- [ora-core-specs/specs/modular-architecture](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture)  
+  White paper bundle for the modular architecture of ORA Core OS and ORA RAG.
 
 - [docs/ORA_CORE_OS_PUBLIC_SPEC.md](docs/ORA_CORE_OS_PUBLIC_SPEC.md)  
   Reference scope, invariants, structure, and public rules.
