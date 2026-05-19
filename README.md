@@ -12,6 +12,20 @@ Start here when you want to understand the ORA Core architecture before reading 
 | ---: | --- |
 | 1 | Canonical ORA Core OS architecture and installation map. |
 
+## GPV2 Foundation
+
+GPV2 is the compact, structured, routable and governed form of GP.
+
+- [GPV2 Foundational Note](docs/GPV2_FOUNDATIONAL_NOTE.md)
+
+Core foundation:
+
+```text
+GP = readable hybrid instruction
+GPV2 = compact governed execution packet
+GPV2 = GP without superfluous noise, but with structure, order, routing, truth and audit
+```
+
 ## Why This Repository Exists
 
 `ora-core-os` is published to make the architecture:
@@ -33,6 +47,7 @@ This repo is for people who want a clear source of truth for:
 
 - a public specification
 - a master white paper
+- a GPV2 foundational note
 - a single-file GPV2 core reference
 - one GPV2 file per core module
 - optional annex modules for targeted extensions
@@ -43,18 +58,20 @@ This repo is for people who want a clear source of truth for:
 ## Start Here
 
 1. [Quickstart](docs/QUICKSTART.md)
-2. [Master White Paper](docs/ORA_CORE_OS_Master_WhitePaper.md)
-3. [Modular Architecture and ORA RAG White Paper](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture)
-4. [Public Spec](docs/ORA_CORE_OS_PUBLIC_SPEC.md)
-5. [Manual Install](docs/INSTALL_MANUAL_GPV2.md)
-6. [Custom GPT Install](docs/INSTALL_CUSTOM_GPT.md)
-7. [GPV2 Index](docs/GPV2/README.md)
+2. [GPV2 Foundational Note](docs/GPV2_FOUNDATIONAL_NOTE.md)
+3. [Master White Paper](docs/ORA_CORE_OS_Master_WhitePaper.md)
+4. [Modular Architecture and ORA RAG White Paper](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture)
+5. [Public Spec](docs/ORA_CORE_OS_PUBLIC_SPEC.md)
+6. [Manual Install](docs/INSTALL_MANUAL_GPV2.md)
+7. [Custom GPT Install](docs/INSTALL_CUSTOM_GPT.md)
+8. [GPV2 Index](docs/GPV2/README.md)
 
 ## Choose Your Path
 
 | Path | Use it when | Start file |
 | --- | --- | --- |
 | Quick evaluation | You want to understand the repo in a few minutes | [docs/QUICKSTART.md](docs/QUICKSTART.md) |
+| GPV2 foundation | You want the simple GP to GPV2 definition before the architecture | [docs/GPV2_FOUNDATIONAL_NOTE.md](docs/GPV2_FOUNDATIONAL_NOTE.md) |
 | Strategic/technical overview | You want the full public architecture narrative | [docs/ORA_CORE_OS_Master_WhitePaper.md](docs/ORA_CORE_OS_Master_WhitePaper.md) |
 | Modular architecture and RAG overview | You want the cross-layer architecture of ORA Core OS and ORA RAG | [ora-core-specs/specs/modular-architecture](https://github.com/TwinsProductionAI/ora-core-specs/tree/main/specs/modular-architecture) |
 | Manual GPV2 install | You want full control over files and wiring | [docs/INSTALL_MANUAL_GPV2.md](docs/INSTALL_MANUAL_GPV2.md) |
@@ -97,6 +114,9 @@ Core rules:
 
 - [docs/QUICKSTART.md](docs/QUICKSTART.md)  
   Fastest entry path for new readers.
+
+- [docs/GPV2_FOUNDATIONAL_NOTE.md](docs/GPV2_FOUNDATIONAL_NOTE.md)  
+  Foundational definition of GPV2 as compact, structured, routable and governed GP.
 
 - [docs/ORA_CORE_OS_Master_WhitePaper.md](docs/ORA_CORE_OS_Master_WhitePaper.md)  
   Master white paper for the public ORA Core OS architecture.
