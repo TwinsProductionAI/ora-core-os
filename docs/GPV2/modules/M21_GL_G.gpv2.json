@@ -1,2 +1,79 @@
-{"GPV2":{"META":{"ID":"MODULE_GL_G","CODE_POS":"M21","VERSION":"1.0.0","TYPE":"PIPELINE_MODULE","GROUP":"S4","CLIENT_VISIBLE":false},"MODULE":{"NAME":"GL_G","CLIENT_ALIAS":"Index Compression Layer","ROLE":"Compresser, router et etiqueter de facon stable","FUNCTION":"Produit tags, index et clefs de reutilisation","BUSINESS_FUNCTION":"Facilite cache, maintenance et routage interne","DEPENDS_ON":["M16","M20"],"USED_IN":["PRODUCTION"],"INPUTS":["truth_map","index_map","routing_rules"],"OUTPUTS":["tag_pack","idx_key","route_map"]}}}
-
+{
+  "GPV2": {
+    "META": {
+      "ID": "MODULE_GL_G",
+      "CODE_POS": "M21",
+      "VERSION": "1.1.0",
+      "TYPE": "PIPELINE_MODULE",
+      "GROUP": "S4",
+      "CLIENT_VISIBLE": false
+    },
+    "MODULE": {
+      "NAME": "GL_G",
+      "CLIENT_ALIAS": "Index Compression Layer",
+      "ROLE": "Compresser, router et etiqueter de facon stable",
+      "FUNCTION": "Produit tags, index, hash et clefs de reutilisation sans porter l autorite de verite",
+      "BUSINESS_FUNCTION": "Facilite cache, maintenance et routage interne",
+      "DEPENDS_ON": ["M16", "M20"],
+      "USED_IN": ["PRODUCTION"],
+      "INPUTS": ["truth_map", "index_map", "routing_rules"],
+      "OUTPUTS": ["tag_pack", "idx_key", "hash_key", "route_map"],
+      "CANON": {
+        "AUTHORITY": {
+          "TRUTH_AUTHORITY": ["HGOV", "GL"],
+          "GL_G_TRUTH_SOURCE": false,
+          "GL_G_ROLE": "compressed index, tag, hash, route and packed state layer",
+          "GLYPH_UI": {
+            "OPTIONAL": true,
+            "ROLE": "visual pedagogy",
+            "BACKEND_AUTHORITY": false
+          }
+        },
+        "GL_G_PRIMITIVE_ORDER": ["IDX", "TAG", "HASH", "MAP", "ROUTE", "PACK", "STAT", "LINK"],
+        "TOKENS": {
+          "IDX": "IDX(key)",
+          "TAG": "TAG(ns,name)",
+          "HASH": "HASH(algo,val)",
+          "MAP": "MAP(src,dst)",
+          "ROUTE": "ROUTE(module,mode)",
+          "PACK": "PACK(name,val)",
+          "STAT": "STAT(risk,uq)",
+          "LINK": "LINK(key,target)"
+        },
+        "STATE_STAT_POLICY": {
+          "GL_STATE": "STATE(name,val)",
+          "GL_G_STAT": "STAT(risk,uq)",
+          "DEPRECATED_IN_GL_G": "STATE(risk,uq)"
+        },
+        "VALIDATION_RULES": [
+          "no_STATE_risk_uq_in_GL_G_payload",
+          "canonical_GL_G_order_required",
+          "HASH_required_for_stable_cache_payload",
+          "GL_G_never_truth_authority",
+          "GLYPH_UI_optional_visual_only"
+        ],
+        "CACHE_POLICY": {
+          "STABLE_CACHE_REQUIRES_HASH": true,
+          "HASH_POSITION": "after_TAG_before_MAP",
+          "HASH_ALGO": "SHA256"
+        }
+      },
+      "GL_G_CANON_PAYLOADS": [
+        {
+          "NAME": "STABLE_CACHE_REF",
+          "CACHE": "STABLE",
+          "ITEMS": [
+            "IDX(key)",
+            "TAG(ns,name)",
+            "HASH(algo,val)",
+            "MAP(src,dst)",
+            "ROUTE(module,mode)",
+            "PACK(name,val)",
+            "STAT(risk,uq)",
+            "LINK(key,target)"
+          ]
+        }
+      ]
+    }
+  }
+}
