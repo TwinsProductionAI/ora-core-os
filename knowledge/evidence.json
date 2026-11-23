@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "name": "ORA Core OS / Public Evidence Registry",
+  "reviewed_on": "2026-11-20",
+  "publication_status": "REVIEWED_CONSENT_CONFIRMED_BY_OWNER",
+  "interpretation": {
+    "documented": "Un artefact ou une source a été consulté. Cela ne valide pas automatiquement une performance.",
+    "self_reported": "Le résultat est déclaré par un utilisateur, non audité indépendamment.",
+    "reported_unverified": "Événement rapporté dans nos échanges, preuve primaire personnelle non consultée.",
+    "public_source": "Une ressource existe publiquement et est consultable; ses claims restent ceux de son émetteur."
+  },
+  "claims": [
+    {
+      "id": "ORA-01",
+      "label": "Architecture publique ORA Core OS",
+      "statement": "Le dépôt public ORA Core OS documente une architecture de 22 modules GPV2.",
+      "date": "2026-11-16",
+      "evidence_class": "public_source",
+      "observed": "README public consulté",
+      "source_urls": [
+        "https://github.com/TwinsProductionAI/ora-core-os"
+      ],
+      "limits": "Le contenu du dépôt démontre une publication technique, pas des gains de qualité mesurés.",
+      "publication": "ALLOW"
+    },
+    {
+      "id": "ORA-02",
+      "label": "Certification interne ORA Academy N5",
+      "statement": "Un certificat interne indique que Bilel Abdallah a obtenu 97 % de réussite et 100 % de complétion au niveau N5 le 24 septembre 2026.",
+      "date": "2026-09-24",
+      "evidence_class": "documented",
+      "observed": "Décrit dans la revue documentaire fournie le 16 novembre 2026",
+      "source_urls": [],
+      "limits": "Certification interne ORA, pas accréditation externe; publication du scan soumise au consentement.",
+      "publication": "ALLOW_WITH_SELF_REPORTED_LIMITS",
+      "provenance": "Résumé du kit fourni ; originaux non réexaminés pendant cette intégration.",
+      "consent": "Confirmation du responsable ORA, 2026-11-20"
+    },
+    {
+      "id": "ORA-03",
+      "label": "Témoignage de Bilel / tâche types",
+      "statement": "Bilel déclare un facteur de vitesse x4 minimum sur des tâches types et recommande ORA à 10/10 après usage avec Claude.",
+      "date": "2026-09-20",
+      "evidence_class": "self_reported",
+      "observed": "Décrit dans la revue documentaire fournie le 16 novembre 2026",
+      "source_urls": [
+        "https://ca.linkedin.com/company/ora-core-os"
+      ],
+      "limits": "Déclaratif; absence de chronométrage A/B et de validation indépendante. Ne pas généraliser x4.",
+      "publication": "ALLOW_WITH_SELF_REPORTED_LIMITS",
+      "provenance": "Résumé du kit fourni ; originaux non réexaminés pendant cette intégration.",
+      "consent": "Confirmation du responsable ORA, 2026-11-20"
+    },
+    {
+      "id": "ORA-04",
+      "label": "Témoignage de Selim / Quentis et DASP",
+      "statement": "Selim déclare un usage presque quotidien et une qualité des livrables estimée de 7/10 à 9/10 avec ORA; recommandation 9/10.",
+      "date": "2026-09-19",
+      "evidence_class": "self_reported",
+      "observed": "Décrit dans la revue documentaire fournie le 16 novembre 2026",
+      "source_urls": [
+        "https://fr.linkedin.com/posts/xavier-fl%C3%A9riag-55a165209_ora-core-os-commence-%C3%A0-sortir-du-laboratoire-activity-7507277996337020928-ofZw"
+      ],
+      "limits": "Auto-évaluation subjective. La confirmation de l auteur ne démontre pas un gain scientifique indépendant.",
+      "publication": "ALLOW_WITH_SELF_REPORTED_LIMITS",
+      "provenance": "Résumé du kit fourni ; originaux non réexaminés pendant cette intégration.",
+      "consent": "Confirmation du responsable ORA, 2026-11-20"
+    },
+    {
+      "id": "ORA-05",
+      "label": "Produit Quentis visible sur le Web",
+      "statement": "Le site public quentis.ca présente le logiciel de gestion d estimation de construction Quentis.",
+      "date": "2026-11-16",
+      "evidence_class": "public_source",
+      "observed": "Site quentis.ca consulté",
+      "source_urls": [
+        "https://quentis.ca/"
+      ],
+      "limits": "N établit pas que le développement ou la roadmap sont directement dus à ORA.",
+      "publication": "ALLOW"
+    }
+  ]
+}
