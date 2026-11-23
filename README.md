@@ -4,6 +4,10 @@ Main public entry point for ORA Core OS.
 
 This repository contains the canonical ORA Core OS architecture in `GPV2`: 22 core modules, one install order, public specifications, and optional annex extensions.
 
+## ORA Core Hub — Connaissance (public, LLM-readable)
+
+Le [miroir public de la page **Connaissance**](knowledge/README.md) contient le [texte complet du portail et des 12 diapositives](knowledge/ORA_CORE_HUB_CONNAISSANCE_INTEGRAL.md), le [registre de preuves](knowledge/evidence.json) et la [transcription de la présentation](knowledge/transcript.json). Cette copie indépendante est un secours de lecture pour les LLM lorsque le domaine du Hub n'est pas accessible ; elle n'ouvre aucune formation ou fonctionnalité premium.
+
 ## Start Here First
 
 If you are new to the ORA Core ecosystem, start with the learning path:
