@@ -13,7 +13,7 @@ if (origin.protocol !== 'https:' || origin.username || origin.password || origin
 const base = origin.origin;
 const sourceRepo = 'https://github.com/TwinsProductionAI/ora-core-os';
 const sourceSite = 'https://oracorehub.com/connaissance';
-const revision = execFileSync('git', ['rev-parse','HEAD'], {cwd:root, encoding:'utf8'}).trim();
+const revision = (process.env.RENDER_GIT_COMMIT || execFileSync('git', ['rev-parse','HEAD'], {cwd:root, encoding:'utf8'})).trim();
 assert.match(revision,/^[a-f0-9]{40,64}$/);
 const specs = [
   ['ORA_CORE_HUB_CONNAISSANCE_INTEGRAL.md','connaissance/index.md','text/markdown'],
@@ -34,7 +34,7 @@ assert.ok(corpus.includes('https://oracorehub.com/connaissance'));
 const evidence=JSON.parse(entries[1].bytes);
 assert.equal(typeof evidence.schema_version,'string');
 const transcript=JSON.parse(entries[2].bytes);
-assert.ok(Array.isArray(transcript)&&transcript.length>0&&transcript.every(x=>typeof x==='string'));
+assert.ok(Array.isArray(transcript)&&transcript.length===12&&transcript.every(x=>typeof x==='string'));
 const snapshot=crypto.createHash('sha256').update(entries.map(e=>e.sha256).join('\n')).digest('hex');
 const marker='ORA-KNOWLEDGE-'+snapshot.slice(0,16).toUpperCase();
 const escape = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -99,5 +99,5 @@ for(const name of ['index.html','connaissance/index.html']){
     const rel=match[1].slice(1);assert.ok(assets.has(rel)||assets.has(rel+'index.html'), 'Broken local link: '+match[1]);
   }
 }
-assert.ok(fs.readFileSync(path.join(output,'connaissance/index.html'),'utf8').includes(escape('ORA Core OS n’est pas') )||corpus.includes('ORA Core OS n\'est pas'));
+assert.ok(fs.readFileSync(path.join(output,'connaissance/index.html'),'utf8').includes(escape("ORA Core OS n'est pas")));
 console.log('PASS knowledge gateway: '+assets.size+' allowlisted files, verified source hashes, no JavaScript, local links valid; '+marker);
