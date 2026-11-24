@@ -1,0 +1,89 @@
+name: Knowledge Gateway public HTTP validation
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/knowledge-public-http.yml'
+      - 'knowledge/**'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  public-https:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Validate public content without credentials
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error, json, hashlib, ssl, re, sys
+          from urllib.parse import urlsplit
+          from xml.etree import ElementTree
+          base = 'https://knowledge.oracorehub.com'
+          fallback = 'https://ora-knowledge-gateway.onrender.com'
+          agent = 'ORA-Knowledge-Public-Validation/1.0 (GitHub-hosted test; not a search crawler)'
+          def read(url, expected=200):
+              req = urllib.request.Request(url, headers={'User-Agent':agent, 'Accept-Encoding':'identity'})
+              try:
+                  with urllib.request.urlopen(req, timeout=12, context=ssl.create_default_context()) as r:
+                      body = r.read(2_000_001)
+                      assert r.status == expected, (url,r.status)
+                      assert len(body) <= 2_000_000, 'Response exceeds test size limit'
+                      assert urlsplit(r.url).scheme == 'https'
+                      assert urlsplit(r.url).netloc in {urlsplit(base).netloc,urlsplit(fallback).netloc}
+                      assert 'noindex' not in r.headers.get('X-Robots-Tag','').lower(), url
+                      print(f'HTTP {r.status} {len(body)} bytes {r.headers.get("Content-Type","")} {url}',flush=True)
+                      return body
+              except urllib.error.HTTPError as e:
+                  if e.code == expected:
+                      print(f'HTTP {e.code} {url}',flush=True)
+                      return b''
+                  raise
+          def sha(b):
+              return hashlib.sha256(b).hexdigest()
+          manifest = json.loads(read(base+'/manifest.json'))
+          assert manifest['origin'] == base, 'Manifest still points to the wrong origin'
+          assert re.fullmatch(r'[0-9a-f]{40,64}', manifest['source_revision'])
+          expected_paths = [
+              '/connaissance/index.md',
+              '/connaissance/evidence.json',
+              '/connaissance/transcript.json',
+              '/source-notes.md'
+          ]
+          assert [r['url'] for r in manifest['resources']] == [base+p for p in expected_paths]
+          content = {}
+          for resource,p in zip(manifest['resources'], expected_paths):
+              data = read(base+p)
+              assert len(data) == resource['bytes'], p
+              assert sha(data) == resource['sha256'], p
+              content[p] = data
+              print('SHA-256 PASS',p,flush=True)
+          snapshot = sha('\n'.join(r['sha256'] for r in manifest['resources']).encode())
+          assert snapshot == manifest['snapshot_sha256']
+          marker = 'ORA-KNOWLEDGE-'+snapshot[:16].upper()
+          access = json.loads(read(base+'/access-check.json'))
+          assert access['marker'] == marker == manifest['access_marker']
+          assert access['source_revision'] == manifest['source_revision']
+          assert access['corpus_sha256'] == sha(content['/connaissance/index.md'])
+          assert read(base+'/llms-full.txt') == content['/connaissance/index.md']
+          assert len(json.loads(content['/connaissance/transcript.json'])) == 12
+          assert 'schema_version' in json.loads(content['/connaissance/evidence.json'])
+          for p in ['/', '/connaissance/']:
+              html = read(base+p).decode('utf-8')
+              assert '<h1>' in html and 'ORA Core Hub' in html
+              assert not re.search(r'<script\b',html,re.I),p
+              assert 'href="'+base+p+'"' in html, 'Wrong canonical '+p
+              if p == '/connaissance/':
+                  assert len(html)>10000 and 'ORA Core OS n&#39;est pas' in html
+          llms = read(base+'/llms.txt').decode('utf-8')
+          assert all(base+p in llms for p in expected_paths)
+          robots = read(base+'/robots.txt').decode('utf-8')
+          assert 'Allow: /' in robots and 'Sitemap: '+base+'/sitemap.xml' in robots
+          sitemap = ElementTree.fromstring(read(base+'/sitemap.xml'))
+          locations = [n.text for n in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
+          assert locations == [base+'/',base+'/connaissance/']
+          read(base+'/__ora_gateway_missing_validation_resource__',404)
+          other = json.loads(read(fallback+'/access-check.json'))
+          assert other['marker'] == marker
+          print('PASS: public HTTPS, official origin, exact corpus hashes, no JavaScript, sitemap, 404 and fallback.',flush=True)
+          print('LIMIT: HTTP access from one runner only; not a real LLM or search-engine indexing test.',flush=True)
+          PY
