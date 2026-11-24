@@ -6,6 +6,9 @@ This repository contains the canonical ORA Core OS architecture in `GPV2`: 22 co
 
 ## ORA Core Hub — Connaissance (public, LLM-readable)
 
+Portail documentaire statique officiel : [ORA Knowledge Gateway](https://knowledge.oracorehub.com/) · [Corpus intégral](https://knowledge.oracorehub.com/connaissance/) · [Index LLM](https://knowledge.oracorehub.com/llms.txt) · [Manifeste et provenance](https://knowledge.oracorehub.com/manifest.json). Accès public sans compte ni JavaScript ; la lecture par chaque produit LLM et son indexation restent à vérifier.
+
+
 Le [miroir public de la page **Connaissance**](knowledge/README.md) contient le [texte complet du portail et des 12 diapositives](knowledge/ORA_CORE_HUB_CONNAISSANCE_INTEGRAL.md), le [registre de preuves](knowledge/evidence.json) et la [transcription de la présentation](knowledge/transcript.json). Cette copie indépendante est un secours de lecture pour les LLM lorsque le domaine du Hub n'est pas accessible ; elle n'ouvre aucune formation ou fonctionnalité premium.
 
 ## Start Here First
