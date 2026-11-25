@@ -60,7 +60,9 @@ function validate(receipt,ref){
  if(!check(keys(r,fields),'Receipt fields mismatch'))return result();
  check(r.protocol_version===ref.protocol.version,'Version mismatch');
  checks.protocol=check(r.protocol_sha256===ref.protocol_sha256,'Protocol digest mismatch')?'MEAS':'CONFLICT';
- const fixture=ref.prompts.get(r.scenario_id+'/'+r.method_id);
+ const validIds=str(r.scenario_id)&&str(r.method_id)&&ref.rubrics.has(r.scenario_id);
+ check(validIds,'Invalid scenario or method identifier');
+ const fixture=validIds?ref.prompts.get(r.scenario_id+'/'+r.method_id):undefined;
  const rubric=ref.rubrics.get(r.scenario_id)?.data;
  checks.prompt=check(!!fixture&&fixture.sha256===r.prompt_sha256,'Unknown scenario/method or prompt digest mismatch')?'MEAS':'CONFLICT';
  check(str(r.run_id)&&str(r.block_id),'Missing identifiers');
@@ -127,7 +129,7 @@ function parseStrict(bytes){
  const ws=()=>{while(p<s.length&&/[ \t\r\n]/.test(s[p]))p++};
  function tokenString(){
   const start=p++;
-  while(p<s.length){const c=s[p++];if(c==='"')return JSON.parse(s.slice(start,p));if(c==='\\')p++}
+  while(p<s.length){const c=s[p++];if(c==='"'){const v=JSON.parse(s.slice(start,p));if(Buffer.from(v,'utf8').toString('utf8')!==v)throw Error('Unpaired Unicode surrogate');return v;}if(c==='\\')p++}
   throw Error('Unterminated JSON string');
  }
  function value(depth){
@@ -149,7 +151,8 @@ function parseStrict(bytes){
  const result=value(0);ws();if(p!==s.length)throw Error('Trailing JSON content');return result;
 }
 function readBounded(path){
- const fd=fs.openSync(path,'r');
+ if(!fs.lstatSync(path).isFile())throw Error('Input must be a regular file (no symlink)');
+ const fd=fs.openSync(path,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0)|(fs.constants.O_NONBLOCK||0));
  try{const st=fs.fstatSync(fd);if(!st.isFile()||st.size>2000000)throw Error('Input must be regular file <= 2 MB');
  const data=Buffer.alloc(st.size+1);let n=0;
  while(n<data.length){const k=fs.readSync(fd,data,n,data.length-n,null);if(!k)break;n+=k}
@@ -157,6 +160,7 @@ function readBounded(path){
  }finally{fs.closeSync(fd)}
 }
 function entry(bytes,ref){
+ if(!Buffer.isBuffer(bytes)||bytes.length>2000000)throw Error('Input must be a Buffer <= 2 MB');
  const digest=sha(bytes);
  try{const r=parseStrict(bytes),audit=validate(r,ref);
  return {receipt_sha256:digest,receipt:r,audit}
@@ -206,16 +210,30 @@ function plan(ref,seed,repetitions=1){
  }
  return {schema:'ora-open-lab/pilot-plan/0.2',protocol_sha256:ref.protocol_sha256,revision:ref.revision,seed,repetitions,blocks,status:'not_executed',note:'Exploratory plan only; keep assignments private from reviewer; use fresh sessions; no execution performed'};
 }
-module.exports={reference,referenceSummary,validate,parseStrict,entry,report,plan,sha,stable};
+function verifyReport(input,ref){
+ if(!obj(input)||input.schema!=='ora-open-lab/halo-report/0.2'||!hash(input.report_sha256))return false;
+ const {report_sha256,digest_convention,...payload}=input;
+ return payload.reference?.protocol_sha256===ref.protocol_sha256&&
+   payload.reference?.source_revision===ref.revision&&sha(stable(payload))===report_sha256;
+}
+module.exports={reference,referenceSummary,validate,parseStrict,entry,report,verifyReport,plan,sha,stable};
 if(require.main===module){
  try{
   const [cmd,revision,...args]=process.argv.slice(2);
   const ref=reference(revision);let out;
   if(cmd==='reference'&&args.length===0)out=referenceSummary(ref);
   else if(cmd==='validate'&&args.length===1){out=entry(readBounded(args[0]),ref).audit;process.exitCode=out.receipt_consistency==='PASS'?0:1}
-  else if(cmd==='report'&&args.length>=1&&args.length<=1000){out=report(args.map(p=>entry(readBounded(p),ref)),ref);process.exitCode=out.trace_status==='CONFLICT'?1:0}
+  else if(cmd==='report'&&args.length>=1&&args.length<=1000){
+   let total=0;const entries=[];
+   for(const p of args){const bytes=readBounded(p);total+=bytes.length;if(total>32000000)throw Error('Aggregate input exceeds 32 MB');entries.push(entry(bytes,ref))}
+   out=report(entries,ref);process.exitCode=out.trace_status==='CONFLICT'?1:0
+  }
+  else if(cmd==='verify-report'&&args.length===1){
+   const ok=verifyReport(parseStrict(readBounded(args[0])),ref);
+   out={report_integrity:ok?'PASS':'FAIL',scope:'Byte consistency under stated canonicalization only; not authenticity',execution_authority:'none'};process.exitCode=ok?0:1
+  }
   else if(cmd==='plan'&&(args.length===1||args.length===2))out=plan(ref,args[0],args[1]===undefined?1:Number(args[1]));
-  else throw Error('Usage: node halo-experimental.cjs reference REV | validate REV receipt.json | report REV receipt1.json ... | plan REV SEED [REPETITIONS]');
+  else throw Error('Usage: node halo-experimental.cjs reference REV | validate REV receipt.json | report REV receipt1.json ... | verify-report REV report.json | plan REV SEED [REPETITIONS]');
   console.log(JSON.stringify(out,null,2));
  }catch(e){console.error('HALO input/reference error: '+e.message);process.exitCode=2}
 }
