@@ -20,6 +20,8 @@ Public experimental laboratory of Twins Productions IA / ORA Core Hub: two ficti
 
 Reading the documentation is not execution. Controlled comparisons require independent sessions and separate evaluation.
 
+- [HALO TraceCore Experimental v0.2.0](docs/HALO_EXPERIMENTAL.md) — offline planning, receipt consistency checks, local registry reports and integrity verification. No automatic model calls or authenticated performance claims.
+
 ## Start Here First
 
 If you are new to the ORA Core ecosystem, start with the learning path:
