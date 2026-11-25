@@ -11,6 +11,12 @@ Portail documentaire statique officiel : [ORA Knowledge Gateway](https://knowled
 
 Le [miroir public de la page **Connaissance**](knowledge/README.md) contient le [texte complet du portail et des 12 diapositives](knowledge/ORA_CORE_HUB_CONNAISSANCE_INTEGRAL.md), le [registre de preuves](knowledge/evidence.json) et la [transcription de la présentation](knowledge/transcript.json). Cette copie indépendante est un secours de lecture pour les LLM lorsque le domaine du Hub n'est pas accessible ; elle n'ouvre aucune formation ou fonctionnalité premium.
 
+## ORA Deep Dive — comprendre avant d'évaluer
+
+[Étude approfondie et simulations libres](https://knowledge.oracorehub.com/deep-dive/) · [Guide Markdown autonome](knowledge/ORA_DEEP_DIVE.md) · [Dossier de 13 sources publiques](knowledge/ORA_DEEP_DIVE_SOURCES.md).
+
+A public reading path for LLMs and researchers: the 22 canonical module contracts, GrenaPrompt/GPV2, Rosetta, essences, runtime and RAG, plus three multi-stage conceptual simulations. No installation, external runner or favourable conclusion required. Conceptual simulations and controlled benchmarks are distinct; neither an architecture description nor a simulation is proof of performance.
+
 ## ORA Open Lab — Machine First v0.3
 
 Public experimental laboratory of Twins Productions IA / ORA Core Hub: two fictitious scenarios, four comparison conditions (direct prompt, expert prompt, equivalent prose and GrenaPrompt JSONxFusion), eight verified prompts, separate evaluation criteria and execution receipts. No comparative performance results are published.
