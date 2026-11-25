@@ -21,7 +21,7 @@ jobs:
           KNOWLEDGE_PUBLIC_ORIGIN: https://knowledge.oracorehub.com
         run: |
           node knowledge/build-gateway.cjs
-          node --test knowledge/halo-experimental.test.cjs
+          node --test knowledge/halo-experimental.test.cjs knowledge/agent-access-mcp.test.cjs
           python3 - <<'PY'
           from pathlib import Path
           import json, hashlib
@@ -62,6 +62,11 @@ jobs:
           assert '/open-lab/' in (root/'sitemap.xml').read_text()
           assert 'https://knowledge.oracorehub.com/open-lab/protocol.json' in (root/'llms.txt').read_text()
           assert load(root/'access-check.json')['marker']=='ORA-KNOWLEDGE-7D8689CA76E44941'
+          agent=load(root/'agent-access.json')
+          assert agent['source_revision']==m['source_revision']
+          assert agent['routes']['mcp']['remote_endpoint'] is None
+          assert agent['routes']['mcp']['status']=='local_stdio_prototype'
+          assert '/agent-access.json' in (root/'index.html').read_text() and '/agent-access.json' in (root/'llms.txt').read_text()
           print('PASS: eight original ZIP fingerprints, Open Lab manifest, exact prompt bytes, empty results and unchanged Knowledge snapshot.')
           PY
   public-https:
@@ -138,6 +143,14 @@ jobs:
           sitemap = ElementTree.fromstring(read(base+'/sitemap.xml'))
           locations = [n.text for n in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
           has_lab = 'open_lab_protocol' in manifest.get('additional_resources',{})
+          if 'agent_access' in manifest.get('additional_resources',{}):
+              agent_access=json.loads(read(base+'/agent-access.json'))
+              assert agent_access['source_revision']==manifest['source_revision']
+              assert agent_access['knowledge_marker']==marker
+              assert agent_access['routes']['mcp']['remote_endpoint'] is None
+              assert agent_access['routes']['mcp']['status']=='local_stdio_prototype'
+              assert base+'/agent-access.json' in llms
+              print('PASS: public agent access descriptor, no remote MCP endpoint.',flush=True)
           assert locations == [base+'/',base+'/connaissance/']+([base+'/open-lab/'] if has_lab else [])
           if has_lab:
               lab = json.loads(read(base+'/open-lab/manifest.json'))

@@ -22,6 +22,8 @@ Reading the documentation is not execution. Controlled comparisons require indep
 
 - [HALO TraceCore Experimental v0.2.0](docs/HALO_EXPERIMENTAL.md) — offline planning, receipt consistency checks, local registry reports and integrity verification. No automatic model calls or authenticated performance claims.
 
+- [ORA Agent Access v0.1 — public channels and local MCP prototype](docs/ORA_AGENT_ACCESS.md) · [Machine-readable access descriptor](https://knowledge.oracorehub.com/agent-access.json). Compatible local clients can read the public snapshot without relying on web search; no remote MCP endpoint is provided.
+
 ## Start Here First
 
 If you are new to the ORA Core ecosystem, start with the learning path:
