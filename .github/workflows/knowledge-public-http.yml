@@ -7,6 +7,62 @@ on:
   workflow_dispatch:
 permissions: {}
 jobs:
+  static-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Compile and validate the proposed static site
+        env:
+          KNOWLEDGE_PUBLIC_ORIGIN: https://knowledge.oracorehub.com
+        run: |
+          node knowledge/build-gateway.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, hashlib
+          root=Path('knowledge-static-dist')
+          lab=root/'open-lab'
+          base='https://knowledge.oracorehub.com/'
+          def load(p): return json.loads(p.read_bytes())
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          originals={
+            'ORA-LAB-001-direct.txt':'831171a1762b5b3dafe8a9dc72f4686775fc8b5b5f012454e8bf41e50834822d',
+            'ORA-LAB-001-expert.txt':'ac7da1f353e1203d525085a011ad30a5bb733ee2d7a168b26c2fe4085579cca7',
+            'ORA-LAB-001-ora.txt':'cddc4a15b95e30212837bb628fde3348f4d8de84461140815f266650d3641920',
+            'ORA-LAB-001-prose.txt':'aaa8fa9c0cd3e85f11be8a59deccd94cf802c6c4229d48b6c4b021145ff142aa',
+            'ORA-LAB-002-direct.txt':'c8a4880bba76f7f747ba9ea3f78e4bbcfaabe38d10d711035c0ccabcc15d5d64',
+            'ORA-LAB-002-expert.txt':'b1d023a6d35e8fc78a64e1780acece5879db3387c9bf98ea7c60f5df3bce0628',
+            'ORA-LAB-002-ora.txt':'d7555654868d489ab4ce4db88d912daa9f5514a9098b0897b956cc933a002957',
+            'ORA-LAB-002-prose.txt':'646e89df3d364b7d857966c1950fea30d22fc467577bcde0274a17f87b7961b6'
+          }
+          assert {p.name:sha(p) for p in (lab/'prompts').glob('*.txt')} == originals
+          m=load(lab/'manifest.json')
+          assert m['version']=='0.3.0' and m['fixture_count']==2 and m['prompt_count']==8
+          for item in m['resources']:
+              assert item['url'].startswith(base+'open-lab/')
+              p=root/item['url'][len(base):]
+              assert p.is_file() and p.stat().st_size==item['bytes'] and sha(p)==item['sha256'], p
+          assert m['protocol_sha256']==sha(lab/'protocol.json')
+          protocol=load(lab/'protocol.json')
+          assert protocol['source_fixture_protocol_sha256']=='7de2ffbae41924315c55464a0bf25e115e7aec41ed8e5be08950b536c04b9349'
+          assert len(protocol['cases'])==2 and len(protocol['methods'])==4
+          for case in protocol['cases']:
+              assert len(case['variants'])==4
+              for v in case['variants']:
+                  p=root/v['prompt_url'][len(base):]
+                  assert sha(p)==v['sha256'] and p.stat().st_size==v['bytes']
+          assert load(lab/'results.json')['results']==[]
+          assert load(lab/'results.json')['count']==0
+          assert 'receipt.schema.json' in (lab/'index.html').read_text()
+          assert '/open-lab/' in (root/'sitemap.xml').read_text()
+          assert 'https://knowledge.oracorehub.com/open-lab/protocol.json' in (root/'llms.txt').read_text()
+          assert load(root/'access-check.json')['marker']=='ORA-KNOWLEDGE-7D8689CA76E44941'
+          print('PASS: eight original ZIP fingerprints, Open Lab manifest, exact prompt bytes, empty results and unchanged Knowledge snapshot.')
+          PY
   public-https:
     runs-on: ubuntu-latest
     timeout-minutes: 4
@@ -80,7 +136,22 @@ jobs:
           assert 'Allow: /' in robots and 'Sitemap: '+base+'/sitemap.xml' in robots
           sitemap = ElementTree.fromstring(read(base+'/sitemap.xml'))
           locations = [n.text for n in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-          assert locations == [base+'/',base+'/connaissance/']
+          has_lab = 'open_lab_protocol' in manifest.get('additional_resources',{})
+          assert locations == [base+'/',base+'/connaissance/']+([base+'/open-lab/'] if has_lab else [])
+          if has_lab:
+              lab = json.loads(read(base+'/open-lab/manifest.json'))
+              assert lab['fixture_count']==2 and lab['prompt_count']==8
+              for item in lab['resources']:
+                  assert item['url'].startswith(base+'/open-lab/')
+                  data=read(item['url'])
+                  assert len(data)==item['bytes'] and sha(data)==item['sha256']
+              assert sha(read(base+'/open-lab/protocol.json'))==lab['protocol_sha256']
+              assert json.loads(read(base+'/open-lab/results.json'))['count']==0
+              assert base+'/open-lab/protocol.json' in llms
+              assert b'<script' not in read(base+'/open-lab/').lower()
+              print('PASS: deployed Open Lab manifest, public prompt integrity, empty results and discovery links.',flush=True)
+          else:
+              print('Open Lab not deployed yet; production Knowledge checks only.',flush=True)
           read(base+'/__ora_gateway_missing_validation_resource__',404)
           other = json.loads(read(fallback+'/access-check.json'))
           assert other['marker'] == marker
