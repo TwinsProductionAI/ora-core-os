@@ -67,6 +67,20 @@ jobs:
           assert agent['routes']['mcp']['remote_endpoint'] is None
           assert agent['routes']['mcp']['status']=='local_stdio_prototype'
           assert '/agent-access.json' in (root/'index.html').read_text() and '/agent-access.json' in (root/'llms.txt').read_text()
+          deep=load(root/'manifest.json')['deep_dive']
+          assert deep['source_revision']==m['source_revision']
+          assert [e['url'] for e in deep['resources']]==[base+'deep-dive/index.md',base+'deep-dive/sources.md']
+          for e in deep['resources']:
+              p=root/e['url'][len(base):]
+              assert p.stat().st_size==e['bytes'] and sha(p)==e['sha256']
+          guide=(root/'deep-dive/index.md').read_text()
+          assert all('| M'+str(i).zfill(2)+' ' in guide for i in range(1,23))
+          assert all('### Simulation '+c in guide for c in 'ABC')
+          dossier=(root/'deep-dive/sources.md').read_text()
+          assert dossier.count('BEGIN RETRIEVED SOURCE TEXT')==13 and dossier.count('END RETRIEVED SOURCE TEXT')==13
+          assert '/deep-dive/' in (lab/'index.html').read_text() and base+'deep-dive/' in (root/'llms.txt').read_text()
+          assert '/deep-dive/' in (root/'sitemap.xml').read_text()
+          print('PASS: Deep Dive public guide, 22 module entries, 3 simulation sections, 13 source entries and supplement hashes.')
           print('PASS: eight original ZIP fingerprints, Open Lab manifest, exact prompt bytes, empty results and unchanged Knowledge snapshot.')
           PY
   public-https:
@@ -151,7 +165,18 @@ jobs:
               assert agent_access['routes']['mcp']['status']=='local_stdio_prototype'
               assert base+'/agent-access.json' in llms
               print('PASS: public agent access descriptor, no remote MCP endpoint.',flush=True)
-          assert locations == [base+'/',base+'/connaissance/']+([base+'/open-lab/'] if has_lab else [])
+          has_deep='deep_dive' in manifest.get('additional_resources',{})
+          if has_deep:
+              deep=manifest['deep_dive']
+              assert deep['source_revision']==manifest['source_revision']
+              assert [e['url'] for e in deep['resources']]==[base+'/deep-dive/index.md',base+'/deep-dive/sources.md']
+              for e in deep['resources']:
+                  data=read(e['url'])
+                  assert len(data)==e['bytes'] and sha(data)==e['sha256']
+              assert base+'/deep-dive/' in llms
+              assert b'ORA Core OS' in read(base+'/deep-dive/')
+              print('PASS: public Deep Dive study guide and primary-source dossier integrity.',flush=True)
+          assert locations == [base+'/',base+'/connaissance/']+([base+'/open-lab/'] if has_lab else [])+([base+'/deep-dive/'] if has_deep else [])
           if has_lab:
               lab = json.loads(read(base+'/open-lab/manifest.json'))
               assert lab['fixture_count']==2 and lab['prompt_count']==8
