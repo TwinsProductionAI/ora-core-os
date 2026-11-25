@@ -67,7 +67,7 @@ const cases=[
  critical:['governance','fabrication']
  }
 ];
-function buildOpenLab({base,revision,page,link}){
+function buildOpenLab({base,revision,page,link,quiet=false}){
  const files=new Map();
  const put=(name,value)=>files.set('open-lab/'+name,value);
  const root=base+'/open-lab/';
@@ -148,7 +148,7 @@ function buildOpenLab({base,revision,page,link}){
  put('manifest.json',json({schema:'ora-open-lab/manifest/1.0',version,source_revision:revision,resources:refs,protocol_sha256:sha(files.get('open-lab/protocol.json')),fixture_count:2,prompt_count:8,verified_fixture_version:'0.2.1',status:'no_published_results'}));
  assert.equal(catalog.reduce((n,s)=>n+s.variants.length,0),8);
  assert.equal(JSON.parse(files.get('open-lab/results.json')).count,0);
- console.log('PASS Open Lab 0.3: 2 original contexts, 8 original prompts byte-identical to 0.2.1, machine protocol, isolated review rubrics, receipt schema, empty results.');
+ if(!quiet)console.log('PASS Open Lab 0.3: 2 original contexts, 8 original prompts byte-identical to 0.2.1, machine protocol, isolated review rubrics, receipt schema, empty results.');
  return files;
 }
 module.exports={buildOpenLab};
