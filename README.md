@@ -11,6 +11,15 @@ Portail documentaire statique officiel : [ORA Knowledge Gateway](https://knowled
 
 Le [miroir public de la page **Connaissance**](knowledge/README.md) contient le [texte complet du portail et des 12 diapositives](knowledge/ORA_CORE_HUB_CONNAISSANCE_INTEGRAL.md), le [registre de preuves](knowledge/evidence.json) et la [transcription de la présentation](knowledge/transcript.json). Cette copie indépendante est un secours de lecture pour les LLM lorsque le domaine du Hub n'est pas accessible ; elle n'ouvre aucune formation ou fonctionnalité premium.
 
+## ORA Open Lab — Machine First v0.3
+
+Public experimental laboratory of Twins Productions IA / ORA Core Hub: two fictitious scenarios, four comparison conditions (direct prompt, expert prompt, equivalent prose and GrenaPrompt JSONxFusion), eight verified prompts, separate evaluation criteria and execution receipts. No comparative performance results are published.
+
+- [Readable experimental protocol and all eight prompts](docs/ORA_OPEN_LAB_MACHINE_FIRST.md) — self-contained Markdown mirror, no runtime required.
+- [Official Open Lab](https://knowledge.oracorehub.com/open-lab/) · [Protocol JSON](https://knowledge.oracorehub.com/open-lab/protocol.json) · [Manifest](https://knowledge.oracorehub.com/open-lab/manifest.json).
+
+Reading the documentation is not execution. Controlled comparisons require independent sessions and separate evaluation.
+
 ## Start Here First
 
 If you are new to the ORA Core ecosystem, start with the learning path:
