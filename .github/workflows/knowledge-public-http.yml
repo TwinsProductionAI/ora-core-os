@@ -21,7 +21,7 @@ jobs:
           KNOWLEDGE_PUBLIC_ORIGIN: https://knowledge.oracorehub.com
         run: |
           node knowledge/build-gateway.cjs
-          node --test knowledge/halo-experimental.test.cjs
+          node --test knowledge/halo-experimental.test.cjs knowledge/agent-access-mcp.test.cjs
           python3 - <<'PY'
           from pathlib import Path
           import json, hashlib
